@@ -22,7 +22,7 @@ const totalRecordToShow = 12;
 const Dashboard = () => {
   let rowCount = -1;
   const [showModal, setShowModal] = useState(false);
-  const [rowBreak, setRowBreak] = useState(2);
+  const [rowBreak, setRowBreak] = useState(4);
   const [products, setProducts] = useState();
   const [productSelected, setProductSelected] = useState();
   const [pagesToShow, setPagesToShow] = useState();
