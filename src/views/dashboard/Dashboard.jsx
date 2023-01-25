@@ -31,7 +31,9 @@ const Dashboard = () => {
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const { data } = await axios("https://dummyjson.com/products");
+        const { data } = await axios(
+          "https://dummyjson.com/products?limit=100"
+        );
         setProducts(data.products);
         const totalPages = Math.round(data.products.length / totalRecordToShow);
         getPages(totalPages);
@@ -103,13 +105,17 @@ const Dashboard = () => {
               </Fragment>
             );
           })}
-        {(rowBreak - rowCount - 1)
-          .toString()
-          .repeat(rowBreak - rowCount - 1)
-          .split("")
-          .map((value, idx) => (
-            <div key={idx} style={{ flex: 1 }}></div>
-          ))}
+        {rowBreak - rowCount - 1 > 0 && (
+          <>
+            {(rowBreak - rowCount - 1)
+              .toString()
+              .repeat(rowBreak - rowCount - 1 || 0)
+              .split("")
+              .map((value, idx) => (
+                <div key={idx} style={{ flex: 1 }}></div>
+              ))}
+          </>
+        )}
       </div>
       <footer className="footer-container">
         <div className="group">
