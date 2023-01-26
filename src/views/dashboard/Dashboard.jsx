@@ -80,6 +80,7 @@ const Dashboard = () => {
         rowBreak={rowBreak}
         setCurrentPage={setCurrentPage}
         pagesToShow={pagesToShow}
+        currentPage={currentPage}
       />
     </div>
   );
