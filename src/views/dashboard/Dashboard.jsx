@@ -1,47 +1,23 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Card from "../../components/card";
-import axios from "axios";
 import Modal from "react-modal";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from "react-responsive-carousel";
-
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    display: "flex",
-    width: "50%",
-  },
-};
+import { customStyles } from "../../utils/constants";
+import useGetProducts from "./hooks/useGetProducts";
+import Footer from "./components/footer";
+import FillCards from "./components/fillCards";
 
 const totalRecordToShow = 12;
 const Dashboard = () => {
   let rowCount = -1;
   const [showModal, setShowModal] = useState(false);
   const [rowBreak, setRowBreak] = useState(4);
-  const [products, setProducts] = useState();
   const [productSelected, setProductSelected] = useState();
-  const [pagesToShow, setPagesToShow] = useState();
+
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const { data } = await axios(
-          "https://dummyjson.com/products?limit=100"
-        );
-        setProducts(data.products);
-        const totalPages = Math.round(data.products.length / totalRecordToShow);
-        getPages(totalPages);
-      } catch (e) {}
-    };
-
-    getProducts();
-  }, []);
+  const { products, pagesToShow } = useGetProducts(totalRecordToShow);
 
   const selectProduct = (product) => {
     setShowModal(true);
@@ -55,17 +31,9 @@ const Dashboard = () => {
     }
   };
 
-  const getPages = (totalPages) => {
-    const pagesToShow = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pagesToShow.push(i);
-    }
-    setPagesToShow(pagesToShow);
-  };
-
   return (
     <div className="container">
-      <h1 style={{ marginLeft: 10 }}>Product List</h1>
+      <span className="title">Product List</span>
       <Modal
         isOpen={showModal}
         onRequestClose={() => setShowModal(false)}
@@ -105,37 +73,14 @@ const Dashboard = () => {
               </Fragment>
             );
           })}
-        {rowBreak - rowCount - 1 > 0 && (
-          <>
-            {(rowBreak - rowCount - 1)
-              .toString()
-              .repeat(rowBreak - rowCount - 1 || 0)
-              .split("")
-              .map((value, idx) => (
-                <div key={idx} style={{ flex: 1 }}></div>
-              ))}
-          </>
-        )}
+        <FillCards rowBreak={rowBreak} rowCount={rowCount} />
       </div>
-      <footer className="footer-container">
-        <div className="group">
-          <label>Productos por fila</label>
-          <input
-            value={rowBreak}
-            onChange={(e) => onUpdateRowBreak(e.target.value)}
-          />
-        </div>
-        <div className="group" style={{ marginLeft: 5 }}>
-          <label>Página</label>
-          <select onChange={(e) => setCurrentPage(e.target.value)}>
-            {pagesToShow?.map((value, idx) => (
-              <option key={idx} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </div>
-      </footer>
+      <Footer
+        onUpdateRowBreak={onUpdateRowBreak}
+        rowBreak={rowBreak}
+        setCurrentPage={setCurrentPage}
+        pagesToShow={pagesToShow}
+      />
     </div>
   );
 };
